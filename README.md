@@ -5,7 +5,7 @@ A peer-to-peer time-slot swapping application built with React, TypeScript, Node
 ## 🚀 Live Application
 
 **Backend API:** [backend](https://servicehive-assiment.onrender.com)
-**Frontend:** [frontend](https://service-hive-assiment-i8xj6a3zb-kanishk1122s-projects.vercel.app/)
+**Frontend:** [frontend](https://service-hive-assiment.vercel.app)
 
 ## Tech Stack
 
