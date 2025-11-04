@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:4000/api', // Your backend URL
+  baseURL: 'https://servicehive-assiment.onrender.com/api', // Your backend URL
 });
 
 // RAOFtf6y6bemiJqH

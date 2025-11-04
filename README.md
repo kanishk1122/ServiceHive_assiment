@@ -1,58 +1,129 @@
-# SlotSwapper (Backend MVP)
+# SlotSwapper - Full Stack Application
 
-A peer-to-peer time-slot swapping application.
+A peer-to-peer time-slot swapping application built with React, TypeScript, Node.js, Express, and MongoDB.
 
-Tech: Node.js, Express, TypeScript, MongoDB (Mongoose), JWT.
+## Tech Stack
 
-## Run locally (backend)
+**Frontend:** React, TypeScript, Vite, React Router
+**Backend:** Node.js, Express, TypeScript, MongoDB (Mongoose), JWT
+**Styling:** Custom CSS with dark theme
 
-- Prereqs: Node 18+, MongoDB running.
-- Setup:
-  - cd d:\assiment_3\backend
-  - cp .env.example .env
-  - Update MONGODB_URI and JWT_SECRET in .env
-  - npm install
-  - npm run dev
+## Getting Started
 
-Health check: GET http://localhost:4000/health
+### Prerequisites
+- Node.js 18+
+- MongoDB Atlas account or local MongoDB instance
 
-## API Summary
+### Backend Setup
+1. Navigate to backend directory:
+   ```bash
+   cd d:\assiment_3\backend
+   ```
 
-Auth
-- POST /api/auth/signup { name, email, password } -> { token, user }
-- POST /api/auth/login { email, password } -> { token, user }
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-Events (Bearer token required)
-- GET /api/events/my -> list my events
-- POST /api/events { title, startTime, endTime, status? } -> create
-- PUT /api/events/:id -> update (owner only)
-- PUT /api/events/:id/status { status } -> update status
-- DELETE /api/events/:id -> delete
+3. Environment setup:
+   - Copy `.env.example` to `.env`
+   - Update the MongoDB URI and JWT secret in `.env`
 
-Swap (Bearer token required)
-- GET /api/swappable-slots -> all SWAPPABLE slots from other users
-- POST /api/swap-request { mySlotId, theirSlotId } -> create request, set both SWAP_PENDING
-- POST /api/swap-response/:requestId { accept: boolean }
-  - If accept = false: request -> REJECTED, slots -> SWAPPABLE
-  - If accept = true: request -> ACCEPTED, swap owners, slots -> BUSY
-- GET /api/requests -> { incoming, outgoing }
+4. Run the backend:
+   ```bash
+   npm run dev
+   ```
 
-Statuses
-- Event.status ∈ { BUSY, SWAPPABLE, SWAP_PENDING }
-- SwapRequest.status ∈ { PENDING, ACCEPTED, REJECTED }
+Backend will run on http://localhost:4000
 
-## Notes/Assumptions
+### Frontend Setup
+1. Navigate to frontend directory:
+   ```bash
+   cd d:\assiment_3\frontend
+   ```
 
-- Swap operations use MongoDB transactions to avoid race conditions.
-- Only the responder (owner of theirSlot at request time) can accept/reject.
-- If ownership changes unexpectedly, acceptance fails safely.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Next steps (Frontend)
+3. Run the frontend:
+   ```bash
+   npm run dev
+   ```
 
-- React + TypeScript app with:
-  - Auth pages
-  - Calendar/List view for my events
-  - Marketplace for swappable slots
-  - Requests view (incoming/outgoing)
-- State management to live-update after swaps.
-# ServiceHive_assiment
+Frontend will run on http://localhost:5173
+
+## API Testing with Postman
+
+### Import Collection
+1. Open Postman
+2. Click "Import" button
+3. Select the file: `d:\assiment_3\SlotSwapper_Postman_Collection.json`
+4. The collection will be imported with all endpoints and environment variables
+
+### Usage Instructions
+1. **Set Base URL**: The collection uses `{{baseUrl}}` variable (default: http://localhost:4000)
+2. **Authentication Flow**:
+   - Run "Sign Up" or "Login" request first
+   - The auth token will be automatically saved and used for subsequent requests
+3. **Test Complete Flow**:
+   - Sign up → Create events → Make them swappable → Create swap requests → Accept/Reject
+
+### Environment Variables
+The collection includes these variables:
+- `baseUrl`: Backend URL (http://localhost:4000)
+- `authToken`: JWT token (auto-populated after login)
+- `userId`: Current user ID (auto-populated)
+- `eventId`: Event ID for testing (auto-populated)
+- `swapRequestId`: Swap request ID for testing (auto-populated)
+
+## API Endpoints Summary
+
+### Authentication
+- `POST /api/auth/signup` - Create account
+- `POST /api/auth/login` - User login
+
+### Events (Auth Required)
+- `GET /api/events/my` - Get user's events
+- `POST /api/events` - Create event
+- `PUT /api/events/:id` - Update event
+- `PUT /api/events/:id/status` - Update event status
+- `DELETE /api/events/:id` - Delete event
+
+### Swap Operations (Auth Required)
+- `GET /api/swappable-slots` - Get available slots from other users
+- `POST /api/swap-request` - Create swap request
+- `POST /api/swap-response/:requestId` - Accept/reject swap request
+- `GET /api/requests` - Get incoming/outgoing requests
+
+### Utility
+- `GET /health` - Health check
+
+## Event Status Types
+- `BUSY` - Normal event, not available for swapping
+- `SWAPPABLE` - Available for swapping with other users
+- `SWAP_PENDING` - Currently part of a pending swap request
+
+## Swap Request Status Types
+- `PENDING` - Waiting for response
+- `ACCEPTED` - Swap completed successfully
+- `REJECTED` - Swap was declined
+
+## Features Implemented
+
+✅ User Authentication (JWT)
+✅ Event CRUD Operations
+✅ Event Status Management
+✅ Swap Request System
+✅ Transactional Swap Operations
+✅ Real-time State Updates
+✅ Responsive Dark Theme UI
+✅ SVG Icons
+✅ Complete Postman Collection
+
+## Notes
+- All swap operations use MongoDB transactions to ensure data consistency
+- Only the slot owner can accept/reject swap requests
+- Slots become `SWAP_PENDING` when involved in active requests
+- Successful swaps exchange ownership and reset status to `BUSY`
