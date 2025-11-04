@@ -16,21 +16,21 @@ export default function Navbar() {
       <div>
         <NavLink to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <SwapIcon size={24} />
-          SlotSwapper
+          <span className="hide-mobile">SlotSwapper</span>
         </NavLink>
         {isAuthenticated && (
           <>
             <NavLink to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <DashboardIcon size={18} />
-              Dashboard
+              <span>Dashboard</span>
             </NavLink>
             <NavLink to="/marketplace" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <MarketplaceIcon size={18} />
-              Marketplace
+              <span>Marketplace</span>
             </NavLink>
             <NavLink to="/requests" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <RequestsIcon size={18} />
-              Requests
+              <span>Requests</span>
             </NavLink>
           </>
         )}
@@ -38,7 +38,7 @@ export default function Navbar() {
       <div>
         {isAuthenticated ? (
           <>
-            <span>Welcome, {user?.name}</span>
+            <span style={{ whiteSpace: 'nowrap' }}>Welcome, {user?.name}</span>
             <button onClick={handleLogout}>Logout</button>
           </>
         ) : (

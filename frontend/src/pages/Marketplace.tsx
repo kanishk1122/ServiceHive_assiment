@@ -24,11 +24,11 @@ export default function Marketplace() {
 
   return (
     <div>
-      <h2 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+      <h2 className="flex-row align-center justify-center gap-2">
         <MarketplaceIcon size={40} />
-        Marketplace
+        <span>Marketplace</span>
       </h2>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', textAlign: 'center', fontSize: '1.1rem' }}>
+      <p className="text-center" style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '1.1rem' }}>
         Browse and request time slots available for swapping from other users.
       </p>
       {error && <p className="error">{error}</p>}
@@ -41,18 +41,18 @@ export default function Marketplace() {
           slots.map(slot => (
             <div key={slot._id} className="event-card">
               <h3>{slot.title}</h3>
-              <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <p className="flex-row align-center gap-1">
                 <CalendarIcon size={16} />
-                <strong>Start:</strong> {new Date(slot.startTime).toLocaleString()}
+                <span><strong>Start:</strong> {new Date(slot.startTime).toLocaleString()}</span>
               </p>
-              <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <p className="flex-row align-center gap-1">
                 <ClockIcon size={16} />
-                <strong>End:</strong> {new Date(slot.endTime).toLocaleString()}
+                <span><strong>End:</strong> {new Date(slot.endTime).toLocaleString()}</span>
               </p>
               <div className="actions">
-                <button onClick={() => setSelectedSlot(slot)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <button onClick={() => setSelectedSlot(slot)} className="flex-row align-center gap-1">
                   <SwapIcon size={16} />
-                  Request Swap
+                  <span>Request Swap</span>
                 </button>
               </div>
             </div>

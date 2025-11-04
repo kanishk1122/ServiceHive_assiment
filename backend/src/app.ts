@@ -4,12 +4,13 @@ import morgan from 'morgan';
 import authRoutes from './routes/auth';
 import eventRoutes from './routes/events';
 import swapRoutes from './routes/swap';
+import notificationRoutes from './routes/notifications';
 
 const app = express();
 
 const allowedOrigins = [
     'https://service-hive-assiment-i8xj6a3zb-kanishk1122s-projects.vercel.app',
-    'http://localhost:3000',
+    'http://localhost:5173',
 ];
 
 const corsOptions = {
@@ -34,6 +35,7 @@ app.use(morgan('dev'));
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api', swapRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
 

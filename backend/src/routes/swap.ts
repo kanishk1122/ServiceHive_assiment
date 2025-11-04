@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import auth, { AuthRequest } from '../middleware/auth';
 import Event from '../models/Event';
 import SwapRequest from '../models/SwapRequest';
+import { syncSwapRequestToSupabase, createNotification } from '../services/supabaseService';
 
 const router = Router();
 
@@ -50,6 +51,26 @@ router.post('/swap-request', auth, async (req: AuthRequest, res) => {
         { session }
       );
 
+      // Sync to Supabase for real-time updates
+      await syncSwapRequestToSupabase({
+        swap_request_id: (sr[0]._id as any).toString(),
+        requester_id: req.userId!,
+        responder_id: theirSlot.owner.toString(),
+        status: 'pending',
+        my_slot_data: mySlot.toObject(),
+        their_slot_data: theirSlot.toObject()
+      });
+
+      // Create notification for the responder
+      await createNotification({
+        user_id: theirSlot.owner.toString(),
+        type: 'swap_request',
+        title: 'New Swap Request',
+        message: `Someone wants to swap "${mySlot.title}" for your "${theirSlot.title}"`,
+        data: { swapRequestId: (sr[0]._id as any).toString() },
+        read: false
+      });
+
       res.status(201).json(sr[0]);
     });
   } catch (e) {
@@ -82,6 +103,27 @@ router.post('/swap-response/:requestId', auth, async (req: AuthRequest, res) => 
         await SwapRequest.updateOne({ _id: sr._id }, { $set: { status: 'REJECTED' } }, { session });
         await Event.updateOne({ _id: mySlot._id }, { $set: { status: 'SWAPPABLE' } }, { session });
         await Event.updateOne({ _id: theirSlot._id }, { $set: { status: 'SWAPPABLE' } }, { session });
+
+        // Update Supabase
+        await syncSwapRequestToSupabase({
+          swap_request_id: (sr._id as any).toString(),
+          requester_id: sr.requesterUser.toString(),
+          responder_id: sr.responderUser.toString(),
+          status: 'rejected',
+          my_slot_data: mySlot.toObject(),
+          their_slot_data: theirSlot.toObject()
+        });
+
+        // Notify requester
+        await createNotification({
+          user_id: sr.requesterUser.toString(),
+          type: 'swap_rejected',
+          title: 'Swap Request Rejected',
+          message: `Your swap request for "${theirSlot.title}" was rejected`,
+          data: { swapRequestId: (sr._id as any).toString() },
+          read: false
+        });
+
         return res.json({ status: 'REJECTED' });
       }
 
@@ -97,6 +139,26 @@ router.post('/swap-response/:requestId', auth, async (req: AuthRequest, res) => 
       await SwapRequest.updateOne({ _id: sr._id }, { $set: { status: 'ACCEPTED' } }, { session });
       await Event.updateOne({ _id: mySlot._id }, { $set: { owner: ownerB, status: 'BUSY' } }, { session });
       await Event.updateOne({ _id: theirSlot._id }, { $set: { owner: ownerA, status: 'BUSY' } }, { session });
+
+      // Update Supabase
+      await syncSwapRequestToSupabase({
+        swap_request_id: (sr._id as any).toString(),
+        requester_id: (sr.requesterUser as any).toString(),
+        responder_id: (sr.responderUser as any).toString(),
+        status: 'accepted',
+        my_slot_data: { ...mySlot.toObject(), owner: ownerB },
+        their_slot_data: { ...theirSlot.toObject(), owner: ownerA }
+      });
+
+      // Notify requester
+      await createNotification({
+        user_id: sr.requesterUser.toString(),
+        type: 'swap_accepted',
+        title: 'Swap Request Accepted!',
+        message: `Your swap request for "${theirSlot.title}" was accepted`,
+        data: { swapRequestId: (sr._id as any).toString() },
+        read: false
+      });
 
       res.json({ status: 'ACCEPTED' });
     });

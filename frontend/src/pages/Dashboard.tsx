@@ -71,18 +71,36 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h2 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+      <h2 className="flex-row align-center justify-center gap-2">
         <DashboardIcon size={40} />
-        My Dashboard
+        <span>My Dashboard</span>
       </h2>
       
       <form onSubmit={handleCreateEvent}>
         <h3>Create New Event</h3>
-        <input type="text" placeholder="Event Title" value={title} onChange={e => setTitle(e.target.value)} required />
-        <label>Start Time</label>
-        <input type="datetime-local" value={startTime} onChange={e => setStartTime(e.target.value)} required />
-        <label>End Time</label>
-        <input type="datetime-local" value={endTime} onChange={e => setEndTime(e.target.value)} required />
+        <input 
+          type="text" 
+          placeholder="Event Title" 
+          value={title} 
+          onChange={e => setTitle(e.target.value)} 
+          required 
+        />
+        <label htmlFor="start-time">Start Time</label>
+        <input 
+          id="start-time"
+          type="datetime-local" 
+          value={startTime} 
+          onChange={e => setStartTime(e.target.value)} 
+          required 
+        />
+        <label htmlFor="end-time">End Time</label>
+        <input 
+          id="end-time"
+          type="datetime-local" 
+          value={endTime} 
+          onChange={e => setEndTime(e.target.value)} 
+          required 
+        />
         <button type="submit">Create Event</button>
       </form>
 
@@ -104,13 +122,13 @@ export default function Dashboard() {
                   {event.status.replace('_', ' ')}
                 </span>
               </p>
-              <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <p className="flex-row align-center gap-1">
                 <CalendarIcon size={16} />
-                <strong>Start:</strong> {new Date(event.startTime).toLocaleString()}
+                <span><strong>Start:</strong> {new Date(event.startTime).toLocaleString()}</span>
               </p>
-              <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <p className="flex-row align-center gap-1">
                 <ClockIcon size={16} />
-                <strong>End:</strong> {new Date(event.endTime).toLocaleString()}
+                <span><strong>End:</strong> {new Date(event.endTime).toLocaleString()}</span>
               </p>
               <div className="actions">
                 {event.status === 'BUSY' && (
@@ -124,9 +142,9 @@ export default function Dashboard() {
                   </button>
                 )}
                 {event.status === 'SWAP_PENDING' && (
-                  <button disabled style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <button disabled className="flex-row align-center gap-1">
                     <PendingIcon size={16} />
-                    Pending Swap
+                    <span>Pending Swap</span>
                   </button>
                 )}
               </div>
